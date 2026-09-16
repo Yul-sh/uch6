@@ -6,11 +6,7 @@ class EntityDetailCard extends StatelessWidget {
   final List<(String, String)> rows;
   final List<Widget>? actions;
 
-  const EntityDetailCard({
-    super.key,
-    required this.rows,
-    this.actions,
-  });
+  const EntityDetailCard({super.key, required this.rows, this.actions});
 
   static const _cardMaxWidth = 720.0;
 
@@ -172,7 +168,9 @@ class _FieldTile extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.45,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

@@ -51,10 +51,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Сейчас: ${item.subtitleRu}',
-                  textAlign: TextAlign.center,
-                ),
+                Text('Сейчас: ${item.subtitleRu}', textAlign: TextAlign.center),
                 const SizedBox(height: 16),
                 for (final option in const [
                   (1, '1 день'),

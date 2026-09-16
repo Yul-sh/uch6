@@ -225,18 +225,9 @@ class _HotelListScreenState extends State<HotelListScreen>
                                     value: null,
                                     child: Text('Все'),
                                   ),
-                                  DropdownMenuItem(
-                                    value: 3,
-                                    child: Text('3'),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 4,
-                                    child: Text('4'),
-                                  ),
-                                  DropdownMenuItem(
-                                    value: 5,
-                                    child: Text('5'),
-                                  ),
+                                  DropdownMenuItem(value: 3, child: Text('3')),
+                                  DropdownMenuItem(value: 4, child: Text('4')),
+                                  DropdownMenuItem(value: 5, child: Text('5')),
                                 ],
                                 onChanged: (value) =>
                                     _go(q.copyWith(stars: value)),
