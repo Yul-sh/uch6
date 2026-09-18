@@ -30,8 +30,7 @@ import 'state/auth_notifier.dart';
 import 'state/hotel_detail_notifier.dart';
 import 'state/tour_detail_notifier.dart';
 
-int _id(GoRouterState state) =>
-    int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+String _id(GoRouterState state) => state.pathParameters['id'] ?? '';
 
 String? _allow(AuthNotifier auth, AppOp op) =>
     auth.can(op) ? null : '/forbidden';

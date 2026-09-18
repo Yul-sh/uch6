@@ -26,13 +26,13 @@ void attachRefreshInterceptor(Dio dio, AuthNotifier auth) {
         final status = error.response?.statusCode;
         final path = error.requestOptions.path;
         final skip = error.requestOptions.extra['skipAuthRefresh'] == true;
-        if (skip || status != 401 || path.contains('/auth/')) {
+        if (skip || status != 401 || path.contains('/auth-')) {
           return handler.next(error);
         }
         try {
           await auth.refreshTokens();
           final options = error.requestOptions;
-          options.headers['Authorization'] = 'Bearer ${auth.accessToken}';
+          options.headers['Authorization'] = auth.accessToken;
           options.extra['skipAuthRefresh'] = true;
           final response = await dio.fetch(options);
           return handler.resolve(response);
@@ -51,7 +51,7 @@ void attachApiInterceptors(Dio dio, {String? Function()? tokenProvider}) {
       onRequest: (options, handler) {
         final token = tokenProvider?.call();
         if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
+          options.headers['Authorization'] = token;
         }
         if (kDebugMode) {
           debugPrint('[API] ${options.method} ${options.uri}');

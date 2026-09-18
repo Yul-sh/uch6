@@ -1,7 +1,7 @@
 import '../data/json_codec.dart';
 
 class Destination {
-  final int id;
+  final String id;
   final String name;
   final String country;
   final DateTime? deletedAt;
@@ -37,15 +37,15 @@ class Destination {
   };
 
   factory Destination.fromJson(Map<String, dynamic> json) => Destination(
-    id: jsonInt(json['id']),
+    id: jsonId(json['id']),
     name: jsonString(json['name']),
     country: jsonString(json['country']),
-    deletedAt: jsonDate(json['deletedAt']),
+    deletedAt: deletedAtFromPb(json),
   );
 }
 
 class TourCategory {
-  final int id;
+  final String id;
   final String name;
   final DateTime? deletedAt;
 
@@ -72,8 +72,8 @@ class TourCategory {
   };
 
   factory TourCategory.fromJson(Map<String, dynamic> json) => TourCategory(
-    id: jsonInt(json['id']),
+    id: jsonId(json['id']),
     name: jsonString(json['name']),
-    deletedAt: jsonDate(json['deletedAt']),
+    deletedAt: deletedAtFromPb(json),
   );
 }

@@ -5,6 +5,7 @@ import '../core/api_exceptions.dart';
 import '../core/breakpoints.dart';
 import '../models/booking.dart';
 import '../repositories/booking_repository.dart';
+import '../state/auth_notifier.dart';
 import '../widgets/api_error_dialog.dart';
 import '../widgets/list_status_views.dart';
 
@@ -30,7 +31,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
       _error = null;
     });
     try {
-      final items = await context.read<BookingRepository>().mine();
+      final user = context.read<AuthNotifier>().user;
+      if (user == null) {
+        if (mounted) setState(() => _items = []);
+        return;
+      }
+      final items = await context.read<BookingRepository>().mine(user.id);
       if (mounted) setState(() => _items = items);
     } on ApiException catch (e) {
       if (mounted) setState(() => _error = '${e.message}\n\n${e.kindLabel}');

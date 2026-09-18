@@ -1,7 +1,7 @@
 import '../data/json_codec.dart';
 
 class Hotel {
-  final int id;
+  final String id;
   final String name;
   final String country;
   final String city;
@@ -47,11 +47,11 @@ class Hotel {
   };
 
   factory Hotel.fromJson(Map<String, dynamic> json) => Hotel(
-    id: jsonInt(json['id']),
+    id: jsonId(json['id']),
     name: jsonString(json['name']),
     country: jsonString(json['country']),
     city: jsonString(json['city']),
     stars: jsonInt(json['stars']),
-    deletedAt: jsonDate(json['deletedAt']),
+    deletedAt: deletedAtFromPb(json),
   );
 }

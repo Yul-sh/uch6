@@ -41,6 +41,7 @@ class _StatsScreenState extends State<StatsScreen> {
     'hotels': 'Отели',
     'clients': 'Клиенты',
     'bookings': 'Брони',
+    'activeBookings': 'Активные брони',
   };
 
   String _label(String key) => _labels[key] ?? key;

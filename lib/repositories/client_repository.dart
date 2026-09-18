@@ -4,12 +4,12 @@ import '../models/page_result.dart';
 
 abstract interface class ClientRepository {
   Future<PageResult<Client>> find(CatalogQuery query);
-  Future<Client?> findById(int id);
-  Future<bool> emailExists(String email, {int? excludeId});
+  Future<Client?> findById(String id);
+  Future<bool> emailExists(String email, {String? excludeId});
   Future<Client> create(Client item);
   Future<Client> update(Client item);
-  Future<void> softDelete(int id);
-  Future<void> hardDelete(int id);
-  Future<void> restore(int id);
-  Future<int> deleteMany(List<int> ids);
+  Future<void> softDelete(String id);
+  Future<void> hardDelete(String id);
+  Future<void> restore(String id);
+  Future<int> deleteMany(List<String> ids);
 }

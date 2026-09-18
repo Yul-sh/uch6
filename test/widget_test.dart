@@ -13,7 +13,7 @@ void main() {
   test('TourQuery сохраняется в адресе и читается обратно', () {
     const query = TourQuery(
       search: 'дубай',
-      categoryId: 2,
+      categoryId: 'cat00000000002',
       page: 3,
       sortField: 'year',
       sortAscending: false,

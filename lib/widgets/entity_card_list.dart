@@ -5,9 +5,9 @@ import 'entity_table.dart';
 class EntityCardList<T> extends StatelessWidget {
   final List<TableColumnSpec<T>> columns;
   final List<T> items;
-  final int Function(T item) idOf;
-  final Set<int> selected;
-  final ValueChanged<int>? onToggleSelect;
+  final String Function(T item) idOf;
+  final Set<String> selected;
+  final ValueChanged<String>? onToggleSelect;
   final List<Widget> Function(T item)? actions;
   final bool Function(T item)? isDeleted;
   final String Function(T item) titleOf;

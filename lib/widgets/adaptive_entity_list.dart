@@ -7,10 +7,10 @@ import 'entity_table.dart';
 class AdaptiveEntityList<T> extends StatelessWidget {
   final List<TableColumnSpec<T>> columns;
   final List<T> items;
-  final int Function(T item) idOf;
+  final String Function(T item) idOf;
   final String Function(T item) titleOf;
-  final Set<int> selected;
-  final ValueChanged<int>? onToggleSelect;
+  final Set<String> selected;
+  final ValueChanged<String>? onToggleSelect;
   final String? sortField;
   final bool sortAscending;
   final void Function(String field)? onSort;

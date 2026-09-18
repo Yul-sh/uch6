@@ -11,7 +11,7 @@ import '../widgets/entity_form_scaffold.dart';
 import '../widgets/list_status_views.dart';
 
 class DestinationFormScreen extends StatefulWidget {
-  final int? id;
+  final String? id;
   const DestinationFormScreen({super.key, this.id});
   bool get isEditing => id != null;
 
@@ -68,7 +68,7 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     final item = Destination(
-      id: widget.id ?? 0,
+      id: widget.id ?? '',
       name: _name.text.trim(),
       country: _country.text.trim(),
     );
@@ -125,7 +125,7 @@ class _DestinationFormScreenState extends State<DestinationFormScreen> {
 }
 
 class CategoryFormScreen extends StatefulWidget {
-  final int? id;
+  final String? id;
   const CategoryFormScreen({super.key, this.id});
   bool get isEditing => id != null;
 
@@ -173,7 +173,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
-    final item = TourCategory(id: widget.id ?? 0, name: _name.text.trim());
+    final item = TourCategory(id: widget.id ?? '', name: _name.text.trim());
     final repo = context.read<CategoryRepository>();
     final ok = await runApiSave(
       context: context,

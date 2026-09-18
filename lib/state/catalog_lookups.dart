@@ -34,37 +34,54 @@ class CatalogLookups extends ChangeNotifier {
   }
 
   Future<void> reload() async {
-    destinations = await _destinations.findAll(includeDeleted: true);
-    hotels = await _hotels.findAll(includeDeleted: true);
-    categories = await _categories.findAll(includeDeleted: true);
+    try {
+      destinations = await _destinations.findAll(includeDeleted: true);
+    } catch (_) {
+      destinations = [];
+    }
+    try {
+      hotels = await _hotels.findAll(includeDeleted: true);
+    } catch (_) {
+      hotels = [];
+    }
+    try {
+      categories = await _categories.findAll(includeDeleted: true);
+    } catch (_) {
+      categories = [];
+    }
     _loaded = true;
     notifyListeners();
   }
 
-  String destinationName(int id) {
+  String destinationName(String id, {String? fallback}) {
     for (final item in destinations) {
       if (item.id == id) return item.name;
     }
+    if (fallback != null && fallback.isNotEmpty) return fallback;
     return '—';
   }
 
-  String categoryNames(List<int> ids) {
+  String categoryNames(List<String> ids, {String? fallback}) {
     final names = <String>[];
     for (final id in ids) {
       for (final item in categories) {
         if (item.id == id) names.add(item.name);
       }
     }
-    return names.isEmpty ? '—' : names.join(', ');
+    if (names.isNotEmpty) return names.join(', ');
+    if (fallback != null && fallback.isNotEmpty) return fallback;
+    return '—';
   }
 
-  String hotelNames(List<int> ids) {
+  String hotelNames(List<String> ids, {String? fallback}) {
     final names = <String>[];
     for (final id in ids) {
       for (final item in hotels) {
         if (item.id == id) names.add(item.name);
       }
     }
-    return names.isEmpty ? '—' : names.join(', ');
+    if (names.isNotEmpty) return names.join(', ');
+    if (fallback != null && fallback.isNotEmpty) return fallback;
+    return '—';
   }
 }

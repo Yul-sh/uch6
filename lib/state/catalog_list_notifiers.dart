@@ -17,13 +17,13 @@ class DestinationListNotifier extends ChangeNotifier {
   PageResult<Destination> _result = PageResult.empty();
   LoadStatus _status = LoadStatus.idle;
   String? _error;
-  final Set<int> _selected = {};
+  final Set<String> _selected = {};
 
   CatalogQuery get query => _query;
   PageResult get result => _result;
   LoadStatus get status => _status;
   String? get error => _error;
-  Set<int> get selected => Set.unmodifiable(_selected);
+  Set<String> get selected => Set.unmodifiable(_selected);
   bool get hasSelection => _selected.isNotEmpty;
 
   Future<void> load() async {
@@ -48,7 +48,7 @@ class DestinationListNotifier extends ChangeNotifier {
     await load();
   }
 
-  void toggleSelection(int id) {
+  void toggleSelection(String id) {
     _selected.contains(id) ? _selected.remove(id) : _selected.add(id);
     notifyListeners();
   }
@@ -59,19 +59,19 @@ class DestinationListNotifier extends ChangeNotifier {
     await load();
   }
 
-  Future<void> softDelete(int id) async {
+  Future<void> softDelete(String id) async {
     await _repository.softDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> hardDelete(int id) async {
+  Future<void> hardDelete(String id) async {
     await _repository.hardDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> restore(int id) async {
+  Future<void> restore(String id) async {
     await _repository.restore(id);
     await load();
   }
@@ -85,13 +85,13 @@ class CategoryListNotifier extends ChangeNotifier {
   PageResult<TourCategory> _result = PageResult.empty();
   LoadStatus _status = LoadStatus.idle;
   String? _error;
-  final Set<int> _selected = {};
+  final Set<String> _selected = {};
 
   CatalogQuery get query => _query;
   PageResult get result => _result;
   LoadStatus get status => _status;
   String? get error => _error;
-  Set<int> get selected => Set.unmodifiable(_selected);
+  Set<String> get selected => Set.unmodifiable(_selected);
   bool get hasSelection => _selected.isNotEmpty;
 
   Future<void> load() async {
@@ -116,7 +116,7 @@ class CategoryListNotifier extends ChangeNotifier {
     await load();
   }
 
-  void toggleSelection(int id) {
+  void toggleSelection(String id) {
     _selected.contains(id) ? _selected.remove(id) : _selected.add(id);
     notifyListeners();
   }
@@ -127,19 +127,19 @@ class CategoryListNotifier extends ChangeNotifier {
     await load();
   }
 
-  Future<void> softDelete(int id) async {
+  Future<void> softDelete(String id) async {
     await _repository.softDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> hardDelete(int id) async {
+  Future<void> hardDelete(String id) async {
     await _repository.hardDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> restore(int id) async {
+  Future<void> restore(String id) async {
     await _repository.restore(id);
     await load();
   }
@@ -153,13 +153,13 @@ class ClientListNotifier extends ChangeNotifier {
   PageResult<Client> _result = PageResult.empty();
   LoadStatus _status = LoadStatus.idle;
   String? _error;
-  final Set<int> _selected = {};
+  final Set<String> _selected = {};
 
   CatalogQuery get query => _query;
   PageResult get result => _result;
   LoadStatus get status => _status;
   String? get error => _error;
-  Set<int> get selected => Set.unmodifiable(_selected);
+  Set<String> get selected => Set.unmodifiable(_selected);
   bool get hasSelection => _selected.isNotEmpty;
 
   Future<void> load() async {
@@ -184,7 +184,7 @@ class ClientListNotifier extends ChangeNotifier {
     await load();
   }
 
-  void toggleSelection(int id) {
+  void toggleSelection(String id) {
     _selected.contains(id) ? _selected.remove(id) : _selected.add(id);
     notifyListeners();
   }
@@ -195,19 +195,19 @@ class ClientListNotifier extends ChangeNotifier {
     await load();
   }
 
-  Future<void> softDelete(int id) async {
+  Future<void> softDelete(String id) async {
     await _repository.softDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> hardDelete(int id) async {
+  Future<void> hardDelete(String id) async {
     await _repository.hardDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> restore(int id) async {
+  Future<void> restore(String id) async {
     await _repository.restore(id);
     await load();
   }

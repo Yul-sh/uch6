@@ -1,7 +1,8 @@
+import '../data/json_codec.dart';
 import 'role.dart';
 
 class AppUser {
-  final int id;
+  final String id;
   final String username;
   final String displayName;
   final Role role;
@@ -13,12 +14,22 @@ class AppUser {
     required this.role,
   });
 
-  factory AppUser.fromJson(Map<String, dynamic> json) => AppUser(
-    id: json['id'] as int? ?? 0,
-    username: '${json['username'] ?? ''}',
-    displayName: '${json['displayName'] ?? json['username'] ?? ''}',
-    role: roleFromApi(json['role'] as String?),
-  );
+  factory AppUser.fromJson(Map<String, dynamic> json) {
+    final email = jsonString(json['email']);
+    final username = jsonString(
+      json['username'],
+      email.isNotEmpty ? email : jsonId(json['id']),
+    );
+    return AppUser(
+      id: jsonId(json['id']),
+      username: username,
+      displayName: jsonString(
+        json['displayName'],
+        username.isNotEmpty ? username : 'User',
+      ),
+      role: roleFromApi(json['role'] as String?),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -46,9 +57,17 @@ class AuthTokens {
     required this.user,
   });
 
-  factory AuthTokens.fromJson(Map<String, dynamic> json) => AuthTokens(
-    accessToken: '${json['accessToken']}',
-    refreshToken: '${json['refreshToken']}',
-    user: AppUser.fromJson(json['user'] as Map<String, dynamic>),
-  );
+  factory AuthTokens.fromJson(Map<String, dynamic> json) {
+    final record = json['record'] is Map
+        ? Map<String, dynamic>.from(json['record'] as Map)
+        : (json['user'] is Map
+              ? Map<String, dynamic>.from(json['user'] as Map)
+              : json);
+    final token = jsonString(json['token'] ?? json['accessToken']);
+    return AuthTokens(
+      accessToken: token,
+      refreshToken: jsonString(json['refreshToken'], token),
+      user: AppUser.fromJson(record),
+    );
+  }
 }

@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../core/api_client.dart';
 import '../core/api_exceptions.dart';
-import '../data/json_codec.dart';
+import '../core/pb.dart';
 import '../models/catalog_query.dart';
 import '../models/lookups.dart';
 import '../models/page_result.dart';
@@ -17,6 +16,7 @@ class ApiDestinationRepository implements DestinationRepository {
   Map<String, dynamic> _body(Destination item) => {
     'name': item.name,
     'country': item.country,
+    'isDeleted': item.isDeleted,
   };
 
   @override
@@ -25,17 +25,24 @@ class ApiDestinationRepository implements DestinationRepository {
     _findToken = CancelToken();
     final token = _findToken!;
     return guardRead(() async {
+      final extra = <String>[];
+      if (q.country != null && q.country!.isNotEmpty) {
+        extra.add('country = "${pbEscape(q.country!)}"');
+      }
+      final params = pbListQuery(
+        search: q.search,
+        sortField: q.sortField,
+        sortAscending: q.sortAscending,
+        page: q.page,
+        size: q.size,
+        includeDeleted: q.includeDeleted,
+        searchFields: const ['name', 'country'],
+        extraFilters: extra,
+      );
+      await maybeDelay(params);
       final response = await _dio.get<dynamic>(
-        '/destinations',
-        queryParameters: listQuery(
-          search: q.search,
-          sortField: q.sortField,
-          sortAscending: q.sortAscending,
-          page: q.page,
-          size: q.size,
-          includeDeleted: q.includeDeleted,
-          extra: {if (q.country != null) 'country': q.country},
-        ),
+        pbRecords('destinations'),
+        queryParameters: params,
         cancelToken: token,
       );
       return parsePage(
@@ -50,17 +57,17 @@ class ApiDestinationRepository implements DestinationRepository {
   Future<List<Destination>> findAll({bool includeDeleted = false}) => guardRead(
     () => fetchAllRecords(
       _dio,
-      '/destinations',
+      'destinations',
       Destination.fromJson,
       includeDeleted: includeDeleted,
     ),
   );
 
   @override
-  Future<Destination?> findById(int id) => guardRead(() async {
+  Future<Destination?> findById(String id) => guardRead(() async {
     try {
-      final response = await _dio.get<dynamic>('/destinations/$id');
-      return Destination.fromJson(response.data as Map<String, dynamic>);
+      final response = await _dio.get<dynamic>(pbRecord('destinations', id));
+      return Destination.fromJson(asJsonMap(response.data));
     } on DioException catch (e) {
       final mapped = mapDioError(e);
       if (mapped is NotFoundException) return null;
@@ -71,44 +78,49 @@ class ApiDestinationRepository implements DestinationRepository {
   @override
   Future<Destination> create(Destination item) => guard(() async {
     final response = await _dio.post<dynamic>(
-      '/destinations',
-      data: _body(item),
+      pbRecords('destinations'),
+      data: {..._body(item), 'isDeleted': false},
     );
-    return Destination.fromJson(response.data as Map<String, dynamic>);
+    return Destination.fromJson(asJsonMap(response.data));
   });
 
   @override
   Future<Destination> update(Destination item) => guard(() async {
-    final response = await _dio.put<dynamic>(
-      '/destinations/${item.id}',
+    final response = await _dio.patch<dynamic>(
+      pbRecord('destinations', item.id),
       data: _body(item),
     );
-    return Destination.fromJson(response.data as Map<String, dynamic>);
+    return Destination.fromJson(asJsonMap(response.data));
   });
 
   @override
-  Future<void> softDelete(int id) =>
-      guard(() => _dio.delete<dynamic>('/destinations/$id'));
-
-  @override
-  Future<void> hardDelete(int id) => guard(
-    () => _dio.delete<dynamic>(
-      '/destinations/$id',
-      queryParameters: {'hard': true},
+  Future<void> softDelete(String id) => guard(
+    () => _dio.patch<dynamic>(
+      pbRecord('destinations', id),
+      data: {'isDeleted': true},
     ),
   );
 
   @override
-  Future<void> restore(int id) =>
-      guard(() => _dio.post<dynamic>('/destinations/$id/restore'));
+  Future<void> hardDelete(String id) =>
+      guard(() => _dio.delete<dynamic>(pbRecord('destinations', id)));
 
   @override
-  Future<int> deleteMany(List<int> ids) => guard(() async {
-    final response = await _dio.post<dynamic>(
-      '/destinations/bulk-delete',
-      data: {'ids': ids},
-    );
-    return jsonInt((response.data as Map)['deleted']);
+  Future<void> restore(String id) => guard(
+    () => _dio.patch<dynamic>(
+      pbRecord('destinations', id),
+      data: {'isDeleted': false},
+    ),
+  );
+
+  @override
+  Future<int> deleteMany(List<String> ids) => guard(() async {
+    var n = 0;
+    for (final id in ids) {
+      await softDelete(id);
+      n++;
+    }
+    return n;
   });
 }
 
@@ -123,16 +135,19 @@ class ApiCategoryRepository implements CategoryRepository {
     _findToken = CancelToken();
     final token = _findToken!;
     return guardRead(() async {
+      final params = pbListQuery(
+        search: q.search,
+        sortField: q.sortField,
+        sortAscending: q.sortAscending,
+        page: q.page,
+        size: q.size,
+        includeDeleted: q.includeDeleted,
+        searchFields: const ['name'],
+      );
+      await maybeDelay(params);
       final response = await _dio.get<dynamic>(
-        '/categories',
-        queryParameters: listQuery(
-          search: q.search,
-          sortField: q.sortField,
-          sortAscending: q.sortAscending,
-          page: q.page,
-          size: q.size,
-          includeDeleted: q.includeDeleted,
-        ),
+        pbRecords('categories'),
+        queryParameters: params,
         cancelToken: token,
       );
       return parsePage(
@@ -148,17 +163,17 @@ class ApiCategoryRepository implements CategoryRepository {
       guardRead(
         () => fetchAllRecords(
           _dio,
-          '/categories',
+          'categories',
           TourCategory.fromJson,
           includeDeleted: includeDeleted,
         ),
       );
 
   @override
-  Future<TourCategory?> findById(int id) => guardRead(() async {
+  Future<TourCategory?> findById(String id) => guardRead(() async {
     try {
-      final response = await _dio.get<dynamic>('/categories/$id');
-      return TourCategory.fromJson(response.data as Map<String, dynamic>);
+      final response = await _dio.get<dynamic>(pbRecord('categories', id));
+      return TourCategory.fromJson(asJsonMap(response.data));
     } on DioException catch (e) {
       final mapped = mapDioError(e);
       if (mapped is NotFoundException) return null;
@@ -169,43 +184,48 @@ class ApiCategoryRepository implements CategoryRepository {
   @override
   Future<TourCategory> create(TourCategory item) => guard(() async {
     final response = await _dio.post<dynamic>(
-      '/categories',
-      data: {'name': item.name},
+      pbRecords('categories'),
+      data: {'name': item.name, 'isDeleted': false},
     );
-    return TourCategory.fromJson(response.data as Map<String, dynamic>);
+    return TourCategory.fromJson(asJsonMap(response.data));
   });
 
   @override
   Future<TourCategory> update(TourCategory item) => guard(() async {
-    final response = await _dio.put<dynamic>(
-      '/categories/${item.id}',
-      data: {'name': item.name},
+    final response = await _dio.patch<dynamic>(
+      pbRecord('categories', item.id),
+      data: {'name': item.name, 'isDeleted': item.isDeleted},
     );
-    return TourCategory.fromJson(response.data as Map<String, dynamic>);
+    return TourCategory.fromJson(asJsonMap(response.data));
   });
 
   @override
-  Future<void> softDelete(int id) =>
-      guard(() => _dio.delete<dynamic>('/categories/$id'));
-
-  @override
-  Future<void> hardDelete(int id) => guard(
-    () => _dio.delete<dynamic>(
-      '/categories/$id',
-      queryParameters: {'hard': true},
+  Future<void> softDelete(String id) => guard(
+    () => _dio.patch<dynamic>(
+      pbRecord('categories', id),
+      data: {'isDeleted': true},
     ),
   );
 
   @override
-  Future<void> restore(int id) =>
-      guard(() => _dio.post<dynamic>('/categories/$id/restore'));
+  Future<void> hardDelete(String id) =>
+      guard(() => _dio.delete<dynamic>(pbRecord('categories', id)));
 
   @override
-  Future<int> deleteMany(List<int> ids) => guard(() async {
-    final response = await _dio.post<dynamic>(
-      '/categories/bulk-delete',
-      data: {'ids': ids},
-    );
-    return jsonInt((response.data as Map)['deleted']);
+  Future<void> restore(String id) => guard(
+    () => _dio.patch<dynamic>(
+      pbRecord('categories', id),
+      data: {'isDeleted': false},
+    ),
+  );
+
+  @override
+  Future<int> deleteMany(List<String> ids) => guard(() async {
+    var n = 0;
+    for (final id in ids) {
+      await softDelete(id);
+      n++;
+    }
+    return n;
   });
 }

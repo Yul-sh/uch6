@@ -57,26 +57,26 @@ Dio _dio({int status = 200, Object? body, DioExceptionType? errorType}) {
 void main() {
   test('Tour.fromJson читает и id, и вложенные объекты', () {
     final tour = Tour.fromJson({
-      'id': 1,
+      'id': 'abc123xyz45678',
       'title': 'Тест',
       'code': 'TY-1',
       'year': 2026,
       'durationDays': 7,
-      'destination': {'id': 4, 'name': 'Рим'},
+      'destination': {'id': 'dest0000000004', 'name': 'Рим'},
       'hotels': [
-        {'id': 8},
-        {'id': 9},
+        {'id': 'hotel000000008'},
+        {'id': 'hotel000000009'},
       ],
       'categories': [
-        {'id': 2},
+        {'id': 'cat00000000002'},
       ],
       'seatsTotal': 10,
       'seatsAvailable': 3,
       'price': 100000,
     });
-    expect(tour.destinationId, 4);
-    expect(tour.hotelIds, [8, 9]);
-    expect(tour.categoryIds, [2]);
+    expect(tour.destinationId, 'dest0000000004');
+    expect(tour.hotelIds, ['hotel000000008', 'hotel000000009']);
+    expect(tour.categoryIds, ['cat00000000002']);
   });
 
   test('find разбирает страницу с сервера', () async {
@@ -85,14 +85,14 @@ void main() {
         body: {
           'items': [
             {
-              'id': 1,
+              'id': 'abc123xyz45678',
               'title': 'Солнце',
               'code': 'TY-2024-001',
               'year': 2024,
               'durationDays': 7,
-              'destinationId': 1,
-              'hotelIds': [1],
-              'categoryIds': [1],
+              'destinationId': 'dest0000000001',
+              'hotelIds': ['hotel000000001'],
+              'categoryIds': ['cat00000000001'],
               'seatsTotal': 40,
               'seatsAvailable': 12,
               'price': 89000,
@@ -122,14 +122,14 @@ void main() {
     await expectLater(
       repo.create(
         const Tour(
-          id: 0,
+          id: '',
           title: 'Дубль',
           code: 'TY-2024-001',
           year: 2026,
           durationDays: 7,
-          destinationId: 1,
-          hotelIds: [1],
-          categoryIds: [1],
+          destinationId: 'dest0000000001',
+          hotelIds: ['hotel000000001'],
+          categoryIds: ['cat00000000001'],
           seatsTotal: 10,
           seatsAvailable: 10,
           price: 10000,
@@ -150,7 +150,7 @@ void main() {
       _dio(status: 409, body: {'message': 'Нет свободных мест на этот тур.'}),
     );
     await expectLater(
-      repo.book(11),
+      repo.book('abc123xyz45678'),
       throwsA(
         isA<ConflictException>().having(
           (e) => e.message,

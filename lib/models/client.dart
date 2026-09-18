@@ -2,7 +2,7 @@ import '../data/json_codec.dart';
 import 'loyalty_card.dart';
 
 class Client {
-  final int id;
+  final String id;
   final String firstName;
   final String lastName;
   final String email;
@@ -53,17 +53,30 @@ class Client {
     'deletedAt': deletedAt?.toIso8601String(),
   };
 
-  factory Client.fromJson(Map<String, dynamic> json) => Client(
-    id: jsonInt(json['id']),
-    firstName: jsonString(json['firstName']),
-    lastName: jsonString(json['lastName']),
-    email: jsonString(json['email']),
-    phone: jsonString(json['phone']),
-    card: LoyaltyCard.fromJson(
-      json['card'] is Map<String, dynamic>
-          ? json['card'] as Map<String, dynamic>
-          : null,
-    ),
-    deletedAt: jsonDate(json['deletedAt']),
-  );
+  factory Client.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic>? cardJson;
+    final card = json['card'];
+    if (card is Map) {
+      cardJson = Map<String, dynamic>.from(card);
+    } else {
+      final expand = json['expand'];
+      if (expand is Map) {
+        final cards = expand['loyalty_cards'] ?? expand['loyalty_card'];
+        if (cards is List && cards.isNotEmpty && cards.first is Map) {
+          cardJson = Map<String, dynamic>.from(cards.first as Map);
+        } else if (cards is Map) {
+          cardJson = Map<String, dynamic>.from(cards);
+        }
+      }
+    }
+    return Client(
+      id: jsonId(json['id']),
+      firstName: jsonString(json['firstName']),
+      lastName: jsonString(json['lastName']),
+      email: jsonString(json['email']),
+      phone: jsonString(json['phone']),
+      card: LoyaltyCard.fromJson(cardJson),
+      deletedAt: deletedAtFromPb(json),
+    );
+  }
 }

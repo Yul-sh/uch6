@@ -1,8 +1,10 @@
+import '../data/json_codec.dart';
+
 class Booking {
-  final int id;
-  final int tourId;
+  final String id;
+  final String tourId;
   final String tourTitle;
-  final int userId;
+  final String userId;
   final String status;
   final DateTime expiresAt;
 
@@ -27,18 +29,22 @@ class Booking {
   }
 
   String get managerSubtitle =>
-      'клиент #$userId · $statusRu · до $expiresFormatted';
+      'клиент $userId · $statusRu · до $expiresFormatted';
 
   String get subtitleRu => isActive
       ? 'активно до $expiresFormatted'
       : 'не активно · до $expiresFormatted';
 
   factory Booking.fromJson(Map<String, dynamic> json) => Booking(
-    id: json['id'] as int? ?? 0,
-    tourId: json['tourId'] as int? ?? 0,
-    tourTitle: '${json['tourTitle'] ?? ''}',
-    userId: json['userId'] as int? ?? 0,
-    status: '${json['status'] ?? 'active'}',
-    expiresAt: DateTime.tryParse('${json['expiresAt']}') ?? DateTime.now(),
+    id: jsonId(json['id']),
+    tourId: json['tourId'] != null
+        ? jsonId(json['tourId'])
+        : jsonId(json['tour']),
+    tourTitle: jsonString(json['tourTitle']),
+    userId: json['userId'] != null
+        ? jsonId(json['userId'])
+        : jsonId(json['user']),
+    status: jsonString(json['status'], 'active'),
+    expiresAt: jsonDate(json['expiresAt']) ?? DateTime.now(),
   );
 }

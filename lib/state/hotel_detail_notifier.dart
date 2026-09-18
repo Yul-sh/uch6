@@ -6,7 +6,7 @@ import 'load_status.dart';
 
 class HotelDetailNotifier extends ChangeNotifier {
   final HotelRepository _repository;
-  final int id;
+  final String id;
 
   HotelDetailNotifier(this._repository, this.id);
 

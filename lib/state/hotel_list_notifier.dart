@@ -16,13 +16,13 @@ class HotelListNotifier extends ChangeNotifier {
   PageResult<Hotel> _result = PageResult.empty();
   LoadStatus _status = LoadStatus.idle;
   String? _error;
-  final Set<int> _selected = {};
+  final Set<String> _selected = {};
 
   HotelQuery get query => _query;
   PageResult<Hotel> get result => _result;
   LoadStatus get status => _status;
   String? get error => _error;
-  Set<int> get selected => Set.unmodifiable(_selected);
+  Set<String> get selected => Set.unmodifiable(_selected);
   bool get hasSelection => _selected.isNotEmpty;
 
   Future<void> load() async {
@@ -48,7 +48,7 @@ class HotelListNotifier extends ChangeNotifier {
     await load();
   }
 
-  void toggleSelection(int id) {
+  void toggleSelection(String id) {
     _selected.contains(id) ? _selected.remove(id) : _selected.add(id);
     notifyListeners();
   }
@@ -59,19 +59,19 @@ class HotelListNotifier extends ChangeNotifier {
     await load();
   }
 
-  Future<void> softDelete(int id) async {
+  Future<void> softDelete(String id) async {
     await _repository.softDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> hardDelete(int id) async {
+  Future<void> hardDelete(String id) async {
     await _repository.hardDelete(id);
     _selected.remove(id);
     await load();
   }
 
-  Future<void> restore(int id) async {
+  Future<void> restore(String id) async {
     await _repository.restore(id);
     await load();
   }

@@ -77,7 +77,7 @@ void main() {
     final auth = AuthNotifier(prefs, AuthApi(Dio()));
     auth.debugSetSession(
       const AppUser(
-        id: 1,
+        id: 'abc123xyz45678',
         username: 'client',
         displayName: 'Анна',
         role: Role.client,
@@ -104,7 +104,7 @@ void main() {
 
     auth.debugSetSession(
       const AppUser(
-        id: 3,
+        id: 'admin00xyz45678',
         username: 'admin',
         displayName: 'Елена',
         role: Role.admin,

@@ -11,7 +11,7 @@ import '../widgets/entity_form_scaffold.dart';
 import '../widgets/list_status_views.dart';
 
 class ClientFormScreen extends StatefulWidget {
-  final int? id;
+  final String? id;
   const ClientFormScreen({super.key, this.id});
   bool get isEditing => id != null;
 
@@ -90,7 +90,7 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
     }
     setState(() => _saving = true);
     final client = Client(
-      id: widget.id ?? 0,
+      id: widget.id ?? '',
       firstName: _firstName.text.trim(),
       lastName: _lastName.text.trim(),
       email: _email.text.trim().toLowerCase(),

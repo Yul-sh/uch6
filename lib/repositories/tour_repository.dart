@@ -4,16 +4,16 @@ import '../models/tour_query.dart';
 
 abstract interface class TourRepository {
   Future<PageResult<Tour>> find(TourQuery query);
-  Future<Tour?> findById(int id);
-  Future<bool> codeExists(String code, {int? excludeId});
-  Future<int> countByDestination(int destinationId);
-  Future<int> countByCategory(int categoryId);
-  Future<int> countByHotel(int hotelId);
+  Future<Tour?> findById(String id);
+  Future<bool> codeExists(String code, {String? excludeId});
+  Future<int> countByDestination(String destinationId);
+  Future<int> countByCategory(String categoryId);
+  Future<int> countByHotel(String hotelId);
   Future<Tour> create(Tour tour);
   Future<Tour> update(Tour tour);
-  Future<Tour> book(int id);
-  Future<void> softDelete(int id);
-  Future<void> hardDelete(int id);
-  Future<void> restore(int id);
-  Future<int> deleteMany(List<int> ids);
+  Future<Tour> book(String id);
+  Future<void> softDelete(String id);
+  Future<void> hardDelete(String id);
+  Future<void> restore(String id);
+  Future<int> deleteMany(List<String> ids);
 }

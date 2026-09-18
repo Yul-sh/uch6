@@ -11,7 +11,7 @@ import '../widgets/entity_form_scaffold.dart';
 import '../widgets/list_status_views.dart';
 
 class HotelFormScreen extends StatefulWidget {
-  final int? id;
+  final String? id;
   const HotelFormScreen({super.key, this.id});
   bool get isEditing => id != null;
 
@@ -71,7 +71,7 @@ class _HotelFormScreenState extends State<HotelFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     final hotel = Hotel(
-      id: widget.id ?? 0,
+      id: widget.id ?? '',
       name: _name.text.trim(),
       country: _country.text.trim(),
       city: _city.text.trim(),

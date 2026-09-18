@@ -1,7 +1,7 @@
 class TourQuery {
   final String search;
-  final int? categoryId;
-  final int? destinationId;
+  final String? categoryId;
+  final String? destinationId;
   final int? yearFrom;
   final int? yearTo;
   final String sortField;
@@ -37,10 +37,12 @@ class TourQuery {
   }) {
     return TourQuery(
       search: search ?? this.search,
-      categoryId: categoryId == _unset ? this.categoryId : categoryId as int?,
+      categoryId: categoryId == _unset
+          ? this.categoryId
+          : categoryId as String?,
       destinationId: destinationId == _unset
           ? this.destinationId
-          : destinationId as int?,
+          : destinationId as String?,
       yearFrom: yearFrom == _unset ? this.yearFrom : yearFrom as int?,
       yearTo: yearTo == _unset ? this.yearTo : yearTo as int?,
       sortField: sortField ?? this.sortField,
@@ -55,10 +57,14 @@ class TourQuery {
     final q = uri.queryParameters;
     final sort = q['sort'] ?? 'title,asc';
     final parts = sort.split(',');
+    final category = q['categoryId'];
+    final destination = q['destinationId'];
     return TourQuery(
       search: q['search'] ?? '',
-      categoryId: int.tryParse(q['categoryId'] ?? ''),
-      destinationId: int.tryParse(q['destinationId'] ?? ''),
+      categoryId: (category == null || category.isEmpty) ? null : category,
+      destinationId: (destination == null || destination.isEmpty)
+          ? null
+          : destination,
       yearFrom: int.tryParse(q['yearFrom'] ?? ''),
       yearTo: int.tryParse(q['yearTo'] ?? ''),
       sortField: parts.isEmpty || parts.first.isEmpty ? 'title' : parts.first,
@@ -73,8 +79,8 @@ class TourQuery {
   Map<String, String> toQueryParameters() {
     final m = <String, String>{};
     if (search.isNotEmpty) m['search'] = search;
-    if (categoryId != null) m['categoryId'] = '$categoryId';
-    if (destinationId != null) m['destinationId'] = '$destinationId';
+    if (categoryId != null) m['categoryId'] = categoryId!;
+    if (destinationId != null) m['destinationId'] = destinationId!;
     if (yearFrom != null) m['yearFrom'] = '$yearFrom';
     if (yearTo != null) m['yearTo'] = '$yearTo';
     if (sortField != 'title' || !sortAscending) {

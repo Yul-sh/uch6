@@ -25,6 +25,7 @@ import 'state/catalog_list_notifiers.dart';
 import 'state/catalog_lookups.dart';
 import 'state/hotel_list_notifier.dart';
 import 'state/tour_list_notifier.dart';
+import 'models/role.dart';
 import 'widgets/connectivity_restorer.dart';
 import 'widgets/inactivity_watcher.dart';
 
@@ -145,12 +146,17 @@ class _FlyYAppState extends State<FlyYApp> {
         return ConnectivityRestorer(
           onBackOnline: () {
             if (!context.mounted) return;
-            if (!context.read<AuthNotifier>().isAuthenticated) return;
+            final auth = context.read<AuthNotifier>();
+            if (!auth.isAuthenticated) return;
             context.read<TourListNotifier>().load();
-            context.read<HotelListNotifier>().load();
-            context.read<DestinationListNotifier>().load();
-            context.read<CategoryListNotifier>().load();
-            context.read<ClientListNotifier>().load();
+            if (auth.can(AppOp.manageCatalog) || auth.can(AppOp.hardDelete)) {
+              context.read<HotelListNotifier>().load();
+              context.read<DestinationListNotifier>().load();
+              context.read<CategoryListNotifier>().load();
+            }
+            if (auth.can(AppOp.manageClients)) {
+              context.read<ClientListNotifier>().load();
+            }
           },
           child: InactivityWatcher(
             onActivity: () {

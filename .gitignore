@@ -33,6 +33,10 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# PocketBase local data (keep migrations + exe)
+pb/pb_data/
+pb/pb_public/
+
 # Symbolication related
 app.*.symbols
 

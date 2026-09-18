@@ -71,6 +71,17 @@ ApiException mapHttpError(int status, dynamic body) {
   final message = (body is Map && body['message'] is String)
       ? body['message'] as String
       : null;
+  Map<String, String> fieldErrors = const {};
+  if (body is Map && body['data'] is Map) {
+    fieldErrors = (body['data'] as Map).map((k, v) {
+      if (v is Map && v['message'] != null) {
+        return MapEntry('$k', '${v['message']}');
+      }
+      return MapEntry('$k', '$v');
+    });
+  } else if (body is Map && body['errors'] is Map) {
+    fieldErrors = (body['errors'] as Map).map((k, v) => MapEntry('$k', '$v'));
+  }
   return switch (status) {
     401 => UnauthorizedException(message ?? 'Требуется вход в систему.'),
     403 => ForbiddenException(
@@ -78,12 +89,12 @@ ApiException mapHttpError(int status, dynamic body) {
     ),
     404 => NotFoundException(message ?? 'Запись не найдена.'),
     409 => ConflictException(message ?? 'Операция невозможна.'),
-    422 => ValidationException(
+    400 when fieldErrors.isNotEmpty => ValidationException(
       message ?? 'Ошибка валидации',
-      (body is Map && body['errors'] is Map)
-          ? (body['errors'] as Map).map((k, v) => MapEntry('$k', '$v'))
-          : const {},
+      fieldErrors,
+      statusCode: 400,
     ),
+    422 => ValidationException(message ?? 'Ошибка валидации', fieldErrors),
     _ => ServerException(
       message ?? 'Неизвестная ошибка (код $status).',
       status,

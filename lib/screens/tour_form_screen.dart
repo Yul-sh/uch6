@@ -15,7 +15,7 @@ import '../widgets/entity_form_scaffold.dart';
 import '../widgets/list_status_views.dart';
 
 class TourFormScreen extends StatefulWidget {
-  final int? id;
+  final String? id;
 
   const TourFormScreen({super.key, this.id});
 
@@ -41,9 +41,9 @@ class _TourFormScreenState extends State<TourFormScreen> {
   late final TextEditingController _seatsAvailable;
   late final TextEditingController _price;
 
-  int? _destinationId;
-  List<int> _hotelIds = [];
-  List<int> _categoryIds = [];
+  String? _destinationId;
+  List<String> _hotelIds = [];
+  List<String> _categoryIds = [];
 
   @override
   void initState() {
@@ -147,7 +147,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
 
     setState(() => _saving = true);
     final tour = Tour(
-      id: widget.id ?? 0,
+      id: widget.id ?? '',
       title: _title.text.trim(),
       code: _code.text.trim().toUpperCase(),
       year: int.parse(_year.text.trim()),
@@ -262,7 +262,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
           validator: (v) => Validators.positiveInt(v, label: 'Длительность'),
         ),
         const SizedBox(height: 12),
-        DropdownButtonFormField<int>(
+        DropdownButtonFormField<String>(
           key: ValueKey(_destinationId),
           initialValue: _destinationId,
           decoration: const InputDecoration(
@@ -289,7 +289,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
           validator: (value) => value == null ? 'Выберите направление' : null,
         ),
         const SizedBox(height: 12),
-        FormField<List<int>>(
+        FormField<List<String>>(
           initialValue: _categoryIds,
           validator: (value) => (value == null || value.isEmpty)
               ? 'Выберите хотя бы один тип'
@@ -327,7 +327,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
           },
         ),
         const SizedBox(height: 12),
-        FormField<List<int>>(
+        FormField<List<String>>(
           initialValue: _hotelIds,
           validator: (value) => (value == null || value.isEmpty)
               ? 'Выберите хотя бы один отель'

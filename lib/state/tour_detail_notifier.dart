@@ -7,7 +7,7 @@ import 'load_status.dart';
 
 class TourDetailNotifier extends ChangeNotifier {
   final TourRepository _repository;
-  final int id;
+  final String id;
 
   TourDetailNotifier(this._repository, this.id);
 

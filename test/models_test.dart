@@ -6,8 +6,8 @@ import 'package:fly_y/models/tour.dart';
 void main() {
   group('Разбор моделей', () {
     test('Tour.fromJson не падает при минимальном JSON', () {
-      final tour = Tour.fromJson({'id': 1});
-      expect(tour.id, 1);
+      final tour = Tour.fromJson({'id': 'abc123xyz45678'});
+      expect(tour.id, 'abc123xyz45678');
       expect(tour.title, '');
       expect(tour.hotelIds, isEmpty);
       expect(tour.categoryIds, isEmpty);
@@ -15,33 +15,33 @@ void main() {
 
     test('Tour.fromJson читает вложенное направление', () {
       final tour = Tour.fromJson({
-        'id': 2,
+        'id': 'tour00000000001',
         'title': 'Тест',
-        'destination': {'id': 5, 'name': 'Рим'},
+        'destination': {'id': 'dest0000000001', 'name': 'Рим'},
         'hotels': [
-          {'id': 3},
+          {'id': 'hotel000000001'},
         ],
         'categories': [
-          {'id': 1},
+          {'id': 'cat00000000001'},
         ],
       });
-      expect(tour.destinationId, 5);
-      expect(tour.hotelIds, [3]);
-      expect(tour.categoryIds, [1]);
+      expect(tour.destinationId, 'dest0000000001');
+      expect(tour.hotelIds, ['hotel000000001']);
+      expect(tour.categoryIds, ['cat00000000001']);
     });
 
     test('Destination.fromJson терпит null-поля', () {
-      final d = Destination.fromJson({'id': 9});
+      final d = Destination.fromJson({'id': 'dest0000000009'});
       expect(d.name, '');
       expect(d.country, '');
     });
 
     test('Booking форматирует дату и статус по-русски', () {
       final b = Booking(
-        id: 1,
-        tourId: 1,
+        id: 'abc123xyz45678',
+        tourId: 'tour00000000001',
         tourTitle: 'Тур',
-        userId: 1,
+        userId: 'user00000000001',
         status: 'active',
         expiresAt: DateTime(2027, 9, 1),
       );

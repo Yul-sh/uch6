@@ -43,7 +43,7 @@ class _InfoPage extends StatelessWidget {
 }
 
 class DestinationDetailScreen extends StatelessWidget {
-  final int id;
+  final String id;
   const DestinationDetailScreen({super.key, required this.id});
 
   @override
@@ -72,7 +72,7 @@ class DestinationDetailScreen extends StatelessWidget {
 }
 
 class CategoryDetailScreen extends StatelessWidget {
-  final int id;
+  final String id;
   const CategoryDetailScreen({super.key, required this.id});
 
   @override
@@ -100,7 +100,7 @@ class CategoryDetailScreen extends StatelessWidget {
 }
 
 class ClientDetailScreen extends StatelessWidget {
-  final int id;
+  final String id;
   const ClientDetailScreen({super.key, required this.id});
 
   @override

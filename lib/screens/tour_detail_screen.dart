@@ -7,6 +7,7 @@ import '../core/form_submit.dart';
 import '../widgets/api_error_dialog.dart';
 import '../widgets/can.dart';
 import '../models/role.dart';
+import '../repositories/booking_repository.dart';
 import '../state/auth_notifier.dart';
 import '../state/catalog_lookups.dart';
 import '../state/load_status.dart';
@@ -63,15 +64,29 @@ class _TourCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lookups = context.watch<CatalogLookups>();
+    if (lookups.destinations.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) context.read<CatalogLookups>().ensureLoaded();
+      });
+    }
     final tour = notifier.tour!;
     final rows = <(String, String)>[
       ('Название', tour.title),
       ('Код', tour.code),
       ('Год', '${tour.year}'),
       ('Длительность', '${tour.durationDays} дней'),
-      ('Направление', lookups.destinationName(tour.destinationId)),
-      ('Тип', lookups.categoryNames(tour.categoryIds)),
-      ('Отели', lookups.hotelNames(tour.hotelIds)),
+      ('Направление', lookups.destinationName(
+        tour.destinationId,
+        fallback: tour.destinationLabel,
+      )),
+      ('Тип', lookups.categoryNames(
+        tour.categoryIds,
+        fallback: tour.categoriesLabel,
+      )),
+      ('Отели', lookups.hotelNames(
+        tour.hotelIds,
+        fallback: tour.hotelsLabel,
+      )),
       ('Мест', '${tour.seatsAvailable} из ${tour.seatsTotal}'),
       ('Цена', '${tour.price} ₽'),
       ('Статус', tour.isDeleted ? 'Скрыт' : 'В каталоге'),
@@ -94,7 +109,19 @@ class _TourCard extends StatelessWidget {
             op: AppOp.issueBooking,
             child: FilledButton.icon(
               onPressed: () async {
+                final auth = context.read<AuthNotifier>();
+                final bookings = context.read<BookingRepository>();
                 try {
+                  final user = auth.user;
+                  if (user == null) {
+                    throw const UnauthorizedException();
+                  }
+                  // Сначала бронь (клиент может создавать), потом места.
+                  await bookings.create(
+                    tourId: notifier.id,
+                    userId: user.id,
+                    tourTitle: notifier.tour?.title ?? '',
+                  );
                   await notifier.book();
                   if (context.mounted) {
                     showApiMessage(context, 'Место забронировано.');

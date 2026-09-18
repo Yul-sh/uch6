@@ -174,7 +174,7 @@ class _TourListScreenState extends State<TourListScreen>
                   spacing: 12,
                   runSpacing: 12,
                   children: [
-                    _dropdown<int?>(
+                    _dropdown<String?>(
                       label: 'Тип тура',
                       value: q.categoryId,
                       items: [
@@ -187,7 +187,7 @@ class _TourListScreenState extends State<TourListScreen>
                       ],
                       onChanged: (value) => _go(q.copyWith(categoryId: value)),
                     ),
-                    _dropdown<int?>(
+                    _dropdown<String?>(
                       label: 'Направление',
                       value: q.destinationId,
                       items: [
@@ -318,7 +318,10 @@ class _TourListScreenState extends State<TourListScreen>
           TableColumnSpec(
             label: 'Направление',
             build: (t) => Text(
-              lookups.destinationName(t.destinationId),
+              lookups.destinationName(
+                t.destinationId,
+                fallback: t.destinationLabel,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
